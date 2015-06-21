@@ -1,7 +1,7 @@
 <%-- 
-    Document   : index
-    Created on : 18 juin 2015, 21:53:39
-    Author     : MIS
+    Document   : dashboard
+    Created on : Jun 20, 2015, 10:51:49 PM
+    Author     : Larry_Lite
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -9,10 +9,9 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Welcome</title>
+        <title>Dashboard</title>
     </head>
     <body>
-        <p>Login to Continue ... </p>
-        <a href="login">Login</a>
+        <h1>Welcome to Mr <% %> </h1>
     </body>
 </html>

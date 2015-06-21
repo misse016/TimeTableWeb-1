@@ -5,6 +5,8 @@
  */
 package com.ttable.model;
 
+import com.ttable.dao.LecturerDAO;
+import com.ttable.util.DbUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,14 +21,15 @@ public class Lecturer {
     String email;
     String phoneNumber;
     String password;
-    String position;
+    int position;
     Faculty faculty;
     Department department;
+    public static enum ACL{NORMAL, MASTER, ADMIN};
     List<Course> listCourse =  new ArrayList<Course>();
 
     // constructor
 
-    public Lecturer(String lecturerId, String firstName, String lastName, String email, String phoneNumber, String password, String position, Faculty faculty, Department department, List<Course> listCourse) {
+    public Lecturer(String lecturerId, String firstName, String lastName, String email, String phoneNumber, String password, int position, Faculty faculty, Department department, List<Course> listCourse) {
         this.lecturerId = lecturerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -39,7 +42,6 @@ public class Lecturer {
         this.listCourse = listCourse;
     }
     
-
     public Lecturer() {}
     
     // getter and setter method
@@ -91,11 +93,11 @@ public class Lecturer {
         this.password = password;
     }
 
-    public String getPosition() {
+    public int getPosition() {
         return position;
     }
 
-    public void setPosition(String position) {
+    public void setPosition(int position) {
         this.position = position;
     }
 
@@ -138,4 +140,31 @@ public class Lecturer {
         else
             return false;
     }    
+//instantiated mostly when trying to authenticate the user
+    public Lecturer(String email, String password,int pos) {
+        this.email = email;
+        this.password = password;
+        this.position = pos;
+    }
+    //identify the user's access level
+    public ACL getACL(){
+        switch(getPosition()){
+            case 0:
+                return ACL.NORMAL; //simple lecturer
+            case 1:
+                return ACL.MASTER; //emulating the hod
+            case 2:
+                return ACL.ADMIN; //emulating the dean
+            default:
+                return ACL.NORMAL;
+        }
+    }
+
+    public boolean isAuthenticated(){
+        LecturerDAO ldao = new LecturerDAO(DbUtil.getConnection());
+        
+        Lecturer lect = ldao.getByEmailAndPassword(email, password, position);
+        
+        return (lect != null) && (!lect.getEmail().isEmpty());  
+    }
 }

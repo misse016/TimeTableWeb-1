@@ -5,6 +5,7 @@
  */
 package appservlets;
 
+import com.ttable.model.Lecturer;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -70,7 +71,17 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+      //  processRequest(request, response);
+        //process request to authenticate
+        String email  = request.getParameter("email");
+        String password = request.getParameter("password");
+        String type = request.getParameter("role");
+        int role = Integer.parseInt(type);
+        Lecturer lecturer  =new Lecturer(email,password, role);
+        if(lecturer.isAuthenticated())
+           request.getRequestDispatcher("app/dashboard").forward(request, response);
+        else
+            System.out.println("Wrong Authentication");
     }
 
     /**

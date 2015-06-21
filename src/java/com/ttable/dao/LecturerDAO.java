@@ -7,7 +7,6 @@ package com.ttable.dao;
 
 import com.ttable.model.Course;
 import com.ttable.model.Department;
-import com.ttable.model.Faculty;
 import com.ttable.model.Lecturer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,7 +36,7 @@ public class LecturerDAO extends DAO<Lecturer> {
                             + "phone_number, password) VALUES(?,?,?,?,?,?,?,?)");
             preparedStatement.setString(1, obj.getLecturerId());
             preparedStatement.setString(2, (obj.getFaculty().getFacultyId()));
-            preparedStatement.setString(3, obj.getPosition());
+            preparedStatement.setInt(3, obj.getPosition());
             preparedStatement.setString(4, obj.getFirstName());
             preparedStatement.setString(5, obj.getLastName());
             //preparedStatement.setString(6, obj.getEmail());
@@ -112,7 +111,7 @@ public class LecturerDAO extends DAO<Lecturer> {
                             + "faculty_id=?, position=?, first_name=?, last_name=?, email=?, "
                             + "phone_number=?, password=? WHERE user_id=?");
             preparedStatement.setString(1, (obj.getFaculty().getFacultyId()));
-            preparedStatement.setString(2, obj.getPosition());
+            preparedStatement.setInt(2, obj.getPosition());
             preparedStatement.setString(3, obj.getFirstName());
             preparedStatement.setString(4, obj.getLastName());
             preparedStatement.setString(5, obj.getEmail());
@@ -173,7 +172,7 @@ public class LecturerDAO extends DAO<Lecturer> {
                 lecturer.setEmail(rs.getString("email"));
                 lecturer.setPhoneNumber(rs.getString("phone_number"));
                 lecturer.setPassword(rs.getString("password"));
-                lecturer.setPosition(rs.getString("position"));
+                lecturer.setPosition(rs.getInt("position"));
                 
                 // set faculty attribute
                 FacultyDAO facultyDAO = new FacultyDAO(this.connection);
@@ -232,7 +231,7 @@ public class LecturerDAO extends DAO<Lecturer> {
                 lecturer.setEmail(rs.getString("email"));
                 lecturer.setPhoneNumber(rs.getString("phone_number"));
                 lecturer.setPassword(rs.getString("password"));
-                lecturer.setPosition(rs.getString("position"));
+                lecturer.setPosition(rs.getInt("position"));
                 
                 // set faculty attribute
                 FacultyDAO facultyDAO = new FacultyDAO(this.connection);
@@ -272,6 +271,74 @@ public class LecturerDAO extends DAO<Lecturer> {
             e.printStackTrace();
         }
         return lecturers;
+    }
+/**
+ * Used to authenticate the user
+ * @param email authentication parameter
+ * @param password authentication parameter
+ * @param pos authentication parameter
+ * @return authenticated user
+ */
+    public Lecturer getByEmailAndPassword(String email, String password, int pos) {
+        Lecturer lecturer = new Lecturer(email, password, pos);
+        try {
+            PreparedStatement preparedStatement = 
+                    connection.prepareStatement("SELECT * FROM lecturer WHERE email=? AND password=? AND position=?");
+            preparedStatement.setString(1, email); //changed from id to email
+            preparedStatement.setString(2, password);
+            preparedStatement.setInt(3, pos);
+            
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                lecturer.setLecturerId(rs.getString("user_id"));
+                lecturer.setFirstName(rs.getString("first_name"));
+                lecturer.setLastName(rs.getString("last_name"));
+               // lecturer.setEmail(rs.getString("email"));
+                lecturer.setPhoneNumber(rs.getString("phone_number"));
+               // lecturer.setPassword(rs.getString("password"));
+               // lecturer.setPosition(rs.getInt("position"));
+                
+                // set faculty attribute
+                FacultyDAO facultyDAO = new FacultyDAO(this.connection);
+                lecturer.setFaculty(facultyDAO.getById(rs.getString("faculty_id")));
+                
+                // set department attribute
+                DepartmentDAO dptDAO = new DepartmentDAO(this.connection);
+                lecturer.setDepartment(dptDAO.getByUserId(rs.getString("user_id")));
+            }
+            
+            //handle course
+            PreparedStatement preparedStatement1 = 
+                    connection.prepareStatement("SELECT * FROM course WHERE user_id=?");
+            preparedStatement1.setString(1, email); //changed from id to email
+            
+            ResultSet rs1 = preparedStatement1.executeQuery();
+            
+            LevelDAO levelDAO = new LevelDAO(this.connection);
+            LecturerDAO lecturerDAO = new LecturerDAO(this.connection);
+            DepartmentDAO departmentDAO = new DepartmentDAO(this.connection);
+            
+            while (rs1.next()) {
+                Course c = new Course(rs1.getString("course_code"),
+                        rs1.getString("course_name"), 
+                        levelDAO.getById(rs1.getString("level_id")),
+                        //lecturerDAO.getById(rs1.getString("user_id")),
+                        //departmentDAO.getById(rs1.getString("department_id")));
+                        null, null);
+                
+                lecturer.addCourse(c);
+            }
+            return lecturer;
+            // end handle course     
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lecturer;
+    }
+
+    @Override
+    public Lecturer getByEmailAndPassword(String email, String password) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

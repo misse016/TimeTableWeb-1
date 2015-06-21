@@ -130,4 +130,9 @@ public class FacultyDAO extends DAO<Faculty> {
         }
         return faculties;
     }   
+
+    @Override
+    public Faculty getByEmailAndPassword(String email, String password) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

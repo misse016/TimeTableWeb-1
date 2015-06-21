@@ -27,6 +27,13 @@ public abstract class DAO<T> {
     
     public abstract T getById(String id);
     
+    /**
+     *
+     * @param email
+     * @param password
+     */
+    public abstract T getByEmailAndPassword(String email, String password);
+    
     public abstract T getById(int id);
     
     public abstract List<T> getAll();

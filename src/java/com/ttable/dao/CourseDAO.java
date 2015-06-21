@@ -148,5 +148,10 @@ public class CourseDAO extends DAO<Course>{
         }
         return courses;
     }
+
+    @Override
+    public Course getByEmailAndPassword(String email, String password) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }
