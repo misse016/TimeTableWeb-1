@@ -58,7 +58,6 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
-        request.setAttribute("lecturer", new Lecturer());
     }
 
     /**
@@ -79,9 +78,11 @@ public class LoginServlet extends HttpServlet {
         String type = request.getParameter("role");
         int role = Integer.parseInt(type);
         Lecturer lecturer  =new Lecturer(email,password, role);
-        if(lecturer.isAuthenticated())
-           request.getRequestDispatcher("app/dashboard").forward(request, response);
-        else
+        if(lecturer.isAuthenticated() != null){
+            request.setAttribute("lecturer", lecturer);
+            request.getRequestDispatcher("app/dashboard").forward(request, response);
+        
+        }else
             System.out.println("Wrong Authentication");
     }
 
