@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="com.ttable.model.Lecturer" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -16,7 +17,8 @@
         <title>Dashboard</title>
     </head>
     <body>
-        <h1>Welcome to Mr <% %> </h1>
+        <% Lecturer lec = (Lecturer)request.getAttribute("lecturer"); %>
+        <h1>Welcome to Mr <%= lec.getFirstName() %> </h1>
         <div class="row">
             <div class="col-lg-3">
                 <ul class="navbar">
