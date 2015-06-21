@@ -160,11 +160,11 @@ public class Lecturer {
         }
     }
 
-    public boolean isAuthenticated(){
+    public Lecturer isAuthenticated(){
         LecturerDAO ldao = new LecturerDAO(DbUtil.getConnection());
         
         Lecturer lect = ldao.getByEmailAndPassword(email, password, position);
         
-        return (lect != null) && (!lect.getEmail().isEmpty());  
+        return lect;  
     }
 }

@@ -78,9 +78,11 @@ public class LoginServlet extends HttpServlet {
         String type = request.getParameter("role");
         int role = Integer.parseInt(type);
         Lecturer lecturer  =new Lecturer(email,password, role);
-        if(lecturer.isAuthenticated())
-           request.getRequestDispatcher("app/dashboard").forward(request, response);
-        else
+        if(lecturer.isAuthenticated() != null){
+            request.setAttribute("lecturer", lecturer);
+            request.getRequestDispatcher("app/dashboard").forward(request, response);
+        
+        }else
             System.out.println("Wrong Authentication");
     }
 
